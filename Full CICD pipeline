@@ -1,0 +1,97 @@
+    1 - Set up repository in github with release branch
+        - Create new repositry in github
+            -> new repo -> repo1
+
+    2 - Make changes to the repo and push it back to github
+
+         - Create in our system the same repository that we create in remote repository; then initialize and 
+        put the code from the developer server and make changes to the repo and push it back to github
+                                    -> mkdir repo1 -> cd repo1
+                                    -> echo "# repo1" >> README.md  
+                                    -> git init
+                                    -> git add.
+                                    -> git remote add origin URL_repos1
+                                    -> git remote -v
+                                    -> git commit -m "readme"
+                                    -> scp -r Dev_username@Dev_hostname(IP):Dev_file .
+                                    -> ls ( Dockerfile   pom.xml   README.md   server/   webapp/   )
+                                    -> vim webapp/pom.xml (to modify artifact name)
+                                    -> vim webapp/src/main/webapp/index.jsp  ( to modify content)
+                                    -> vim Dockerfile ( to modify war file name in webapp/target/name.war)
+                                    -> git add.
+                                    -> git commit -m "code"
+                                    -> git push origin main
+   
+   -> configure job_code: maven job -> pull code (git); build(maven) ; test(Junit) ; 
+   deploy to a registry (Docker Build and Publish)
+    3 - Integrate jenkins with maven  to build the code using pom file
+        - Install jenkins; Maven; Git ; Docker and set up Java path, Maven path.
+        - In manage plugins; install plugins 
+                        -> Git 
+                        -> maven invoker and maven integration
+        - In global tool configuration; set up path of: git, maven and java 
+
+    4 - Integrate jenkins with PMD, findbugs and  checkstyle to scan the code
+        - In manage plugins; install plugins Warnings Next Generation
+        - Goals and options: clean install package checkstyle:checkstyle pmd:pmd findbugs:findbugs
+        - post-build action: Record compiler warning and static analysis results then add tools.
+                Integrate jenkins with security tools or code analytic tools, code scan for vulnerability, that is to make sure the code is scan and 
+                meet all the good practice requirements before any artifact is created. if the code doesn't meet all these requirement, we need to failed 
+                the job or make the job unstable so that the developer can give it another look.
+
+        
+    5 - Integrate jenkins with docker using dockerfile to copy artifact 
+        from jenkins 's workspace to tomcat; Then build an image of the code and store that to a registry
+        - usermod -aG docker jenkins  -> to add user jenkins to group docker
+        - In manage plugins; install plugins 
+                 CloudBees Docker Build and Publish
+       
+    6 - Set up kubernetes cluster
+
+             - set up k8s cluster on AWS using "kops"
+                    -> create an EC2 instance and install AWSCLI, kubectl, kops
+                    -> create an IAM user/role with route53, EC2, IAM and S3 full access
+                    -> attach IAM role to EC2 instance
+                    -> create a route53 private hosted zone
+                    -> create an S3 bucket and Expose environment variable
+                    -> create SSH keys before creating cluster
+                    -> create k8s cluster and validate your cluster (1 master and 2 nodes created)
+             - Set up the password root 
+                    -> passwd root
+                    -> vim /etc/ssh/sshd_config (PasswordAuthentication yes | PermitRootLogin yes) -> if AWS
+             - Create and Configure the deployment file for artifact, pods and the service file  for loadbalancer              
+                            -> vim deploy.yml (give name_app, pods_number, artifact created with no tag for pulling each time the latest)
+                            -> vim service.yml (give name_service, name_app) => put a LB in front of the pods. ( go to the browser; IP_master:31200/name.war )
+    
+    7 - Configure ansible to access kubernetes master server for deployment
+             -  Install ansible
+                 -> cd /etc/ansible
+             - Edit playbook with tasks to deploy app and service
+                 -> vim k8s.yml ( command: kubectl create -f deploy.yml --namespace=dev; kubectl create-f service.yml )
+             - Edit inventory file with kubernetes master as hosts
+                 -> vim hosts ([k8s] ansible_host="IP_k8s" ansible_ssh_user=root ansible_ssh_pass=*******)
+
+
+    8 - Configure jenkins to login to ansible using SSH and run playbook 
+        -  create an ansible_user with password 
+          -> vim /etc/ssh/sshd_config (PasswordAuthentication yes) -> if AWS
+          -> service sshd restart
+          -> su user1
+          -> ansible -i /etc/ansible/hosts k8S -m ping
+          In manage plugins; install plugins 
+              -> SSH 
+          in manage credentials -> kind: username (user1) with password => jenkins uses the user1 credential to login to ansible
+        -> configure system -> SSH sites
+    
+    
+    9 - For testing purpose, set up deployment job in jenkins which is trigged by job_code
+
+        Configure job_deploy: freestyle job-> Build Triggers (build after job_code) 
+        -> Build (Execute script on remote host using ssh; command: ansible-playbook /etc/ansible/k8s.yml)
+     job_code trigger Job_deploy_to_dev; what trigger job_deploy_to_QA; what trigger job_deploy_to_Preprod
+
+    10 - If everything looks good, submit a pull request with prouf that the code has been tested 
+      to merge release branch to main branch.
+    11 - Then, another job_code_prod is trigger to build and push the artifact to Prod_registry
+    10 - Finally, Job_code_prod trigger job_deploy_prod that deploy artifact to kubernetes cluster production
+    and the customers get the new code.
