@@ -1,0 +1,25 @@
+Jenkins console:
+
+    - Install “Role-based Authorization Strategy” in manage jenkins >> manage plugins
+    - Choose “Role-Based Strategy” in manage jenkins >> Configure Global Security
+    - Create users in Manage jenkins >> Manage Users
+    - Create a new global role in Manage jenkins  >> “Manage and Assign Roles” that will be 	
+    applicable for all the objects in the jenkins.
+            For example, create “admin” role, “developer” role, “devops” role, etc here.
+          Once add a global role (for example: developer), then select the permissions that we 		
+          want to assign for that particular global role.
+    
+    - Create a new item roles  in Manage jenkins >> “Manage and Assign Roles 
+    that can be 	applied to only certain projects (i.e jobs) that match a certain pattern. 
+          For example, create a project role called “web”,which will apply only to all the projects 
+          (i.e 	jenkins jobs) that starts with the keyword “web*” (this is the pattern) .
+          add “(?i)” to the pattern for case insensitive. For example (?i)web* will match jobs 	
+          starting with both “web” and “Web”.
+          After creating the roles (either global role, or project role) with appropriate permissions, 	
+          the next step is to assign users to this role.
+    
+    - Assign user to the new group in “Manage Jenkins” >> “Manage and Assign Roles” 
+    Add user created and click on the “check-box” corresponding to the project-role name for 	this user,
+    which will assign that particular role to user.
+    In this case, I’ve added “web” Project roles to a user called Lisa. the pattern we gave was “web*”. 	
+    So, Lisa will have access to any Jenkins project that has the word “web” in the name.
