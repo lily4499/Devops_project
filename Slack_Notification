@@ -1,0 +1,15 @@
+Integrate Jenkins with slack for notification
+    - on jenkins 
+        manage jenkins -> manage plugins -> slack notification
+
+    - on slack
+        create a channel -> choose to add people
+        On app directory -> add jenkins CI app to slack -> then choose the channel created
+    
+    - Set up jenkins_server  instruction from slack 
+    manage jenkins -> configure system -> slack (workspace= Team subdomain; create credential with secret text; channel created)
+    then test connection
+    - Add post-build action -> 
+    choose slack notification -> 
+    notify for (build start, success, aborted, not built, unstable, regression, every failure, notify back to normal)
+    - Apply and save
