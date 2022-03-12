@@ -1,0 +1,53 @@
+CI/CD pipeline to package and deploy war files to tomcat 
+    Prerequisites
+        Tomcat server with tomcat and java install Then configure java path.
+        Jenkins server with Jenkins, java, git, maven install, Then configure java and maven path.
+     
+     
+     Part-01 : Integration steps
+      Install maven integration and maven invoker plugin to container plugin 
+      without restart in manage plugins.
+      Set name and path for git, java, maven in global tool configuration;
+       
+              Steps to create Jenkin job
+                  Login to Jenkins console
+                  Create Jenkins job, Fill the following details,
+                  Source Code Management:
+                  Repository: https://github.com/...........
+                  Branches to build : */.......
+                  Build:
+                  Root POM:pom.xml
+              Goals and options : clean install package
+    
+    Part-02: Adding Deployment Steps
+        In this part we are going to install 'deploy to container' plugin. this is need 
+        to deploy on tomcat server.
+        Manage Jenkins > Jenkins Plugins > available > deploy to container
+    To deploy our build artifacts on tomcat server our Jenkins server need access. 
+    For this we should setup credentials.
+    setup credentials
+        credentials > jenkins > Global credentials > add credentials
+        Username : deployer
+        Password : XXXXXXX
+        id : Tomcat_user
+        Description: Tomcat_user
+        Modify the same job which created in part-01 and add deployment steps.
+
+    Post Steps
+    Deploy war/ear to container
+        WAR/EAR files : **/*.war
+        Containers : Tomcat 8.x
+        Credentials: Tomcat_user (which created in above step)
+        Tomcat URL : http://<PUBLIC_IP>:<PORT_NO>
+        Save and run the job now.
+    
+    
+    Part-03 : Continuous Integration & Continuous Deployment (CI/CD)
+        
+        Now job is running fine but to make this as Continuous Integration and Continuous Deployment 
+        To do that go back and modify job as below.
+    Build Triggers
+        Poll SCM
+        schedule */2 * * * *
+        Save the job and modify the code in GitHub. 
+    Then you could see your job get trigger a build without any manual intervention.
