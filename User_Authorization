@@ -1,4 +1,6 @@
 Jenkins Role-based Authorization Strategy
+How to Restrict Jenkins Project Access to Users and Groups using Roles
+
 The Role-based Authorization Strategy plugin is used to add a new role-based
 mechanism to manage user’s permissions.
 
