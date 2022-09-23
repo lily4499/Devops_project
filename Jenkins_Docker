@@ -1,0 +1,29 @@
+Integrate jenkins project with docker
+
+Here, the developers push the code to GitHub. 
+jenkins pull that code from the registry, and build a docker image and push that to docker registry. 
+
+
+
+To do that: we need:
+- A Server with :
+  Jenkins and docker installed and configured;
+  Git installed and  path set up on server and console Jenkins
+  
+- Code in Github with a Dockerfile to build docker image. 
+
+- As plugins: 
+”Cloudbees Docker Build and Publish ” to enable building Dockerfile based project.
+“Git plugin”to integrate git with jenkins.
+          
+          
+
+Now , give access to jenkins to the docker registry. 
+In manage credentials, add the credentials. In kind, choose username and password. 
+
+ Finally, create a freestyle job
+Give to jenkins the git URL of my code; precise the branch to build; 
+set up Poll SCM to check whether changes were made (i.e. new commits) and builds the project if new commits where pushed since the last build.  
+In add post build, click on docker build and publish to give jenkins login information and also tag our repository.
+
+
