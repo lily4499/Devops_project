@@ -1,0 +1,25 @@
+Integrate jenkins project with tomcat
+Here, jenkins pull the code from GitHub, Build it using maven. 
+After that, Jenkins get the war file (webapp.war) and deploy it in webapps (Tomcat server). 
+
+To do that: I need:
+
+A code in GitHub that has a POM file which generates war file.
+A server with Tomcat and java installed and configured.
+A Server with these tools installed and configured:
+	- A CI/CD tool :like ”jenkins”  
+- A SCM (Source Control Management) tool: like “git”. 
+ 	- A project management tool : like “maven”
+- As plugins: “Git plugin”to integrate git with jenkins.
+
+Now , give access to jenkins to the tomcat server. 
+In manage credentials, add the credentials. In kind, choose username and password which are deployer. 
+
+ Finally, create a maven job
+ Give to jenkins the git URL of the code; precise the branch to build; 
+ Set up Poll SCM to check whether changes were made (i.e. new commits) 
+ Add the goals: clean install package in the job.
+ and builds the project if new commits where pushed since the last build, 
+ 
+In post build actions, look for deploy war/ear to a container and fill out (**/*.war)
+choose tomcat 8, give credentials. Then paste URL of the server tomcat.
