@@ -1,0 +1,23 @@
+Jenkins Ansible Integration : Run Ansible playbook from jenkins pipeline job 
+Here, jenkins pull the code from the registry, and deploy the code to the targets servers and execute the code using ansible playbook. 
+The code has to have a playbook file with instruction for the tasks and a inventory created with the ip address of the target server)  
+.
+To do that, I need :
+
+A Server with these tools installed and configured :
+	  - A CI/CD tool :like ”jenkins” which is written in “java” 
+    - A SCM (Source Control Management) tool: like “git”. 
+	  - Ansible to deploy tasks to the targets servers
+As plugins: 
+“Git plugin”to integrate git with jenkins.
+“Ansible plugin” Invoke ansible Ad-Hoc commands and playbooks.
+
+Now , create a new job pipeline
+In the script ; First clone ansible repository. 
+Then  execute ansible playbook.
+to do that, go to pipeline syntax, on sample step,
+choose ansiblePlaybook: invoke an ansible playbook and file out the information 
+with the name of ansible that I give in global tool configuration, 
+of the playbook file and of the inventory file. 
+Also, add credentials to enable jenkins to connect with the target server by ssh username with private key; 
+After that, click on generate pipeline, copy and paste in the script.
