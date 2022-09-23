@@ -1,0 +1,31 @@
+Integrate jenkins project with maven
+
+Here, the developers push the code to GitHub. Jenkins pull that code from the registry, 
+and build it using maven. The code has to have a POM (project object model) file.
+
+
+Prerequisite:
+A Linux Server with these tools installed and configured:
+- A CI/CD tool: Jenkins to enable  build, test, and deploy the software, 
+install “java” because jenkins is  written entirely in Java. Then tell jenkins where is java in the system. 
+So set up JAVA_HOME in bash_profile. 
+Set up also the name and path in global tool configuration on Console jenkins.
+
+- A SCM tool (Source Control Management): GIT that instructs Jenkins to obtain code from GitHub.
+Set up the name and path in global tool configuration on Console jenkins..
+
+  - A project management tool: Maven  that allows  to create projects, dependency, and documentation using Project Object Model. 
+ Install “maven” in opt directory, go back to home directory to give maven’s path, M2_HOME, to jenkins in bash_profile. 
+ Set up the name and path in global tool configuration.
+
+- As plugins, I install” Git plugin”to integrate git with jenkins.
+- The code in Github with the pom file.
+
+
+
+
+
+Now, I can create a maven job. 
+Give to jenkins the git URL of the code and the goals: clean install package .
+Precise the branch to build; set up Poll SCM to check whether changes were made (i.e. new commits) 
+and builds the project if new commits where pushed since the last build.  
